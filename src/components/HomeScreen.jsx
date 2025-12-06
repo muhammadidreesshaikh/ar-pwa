@@ -20,13 +20,13 @@ const HomeScreen = ({ onStart }) => {
                     <h1 className="text-4xl font-black tracking-tight">
                         INSTANT <span className="text-cyan-400">CLEAN</span>
                     </h1>
-                    <p className="text-white/60 text-lg max-w-xs mx-auto">
+                    {/* <p className="text-white/60 text-lg max-w-xs mx-auto">
                         Experience the power of AI cleaning in real-time.
-                    </p>
+                    </p> */}
                 </div>
 
                 {/* Instructions */}
-                <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 w-full max-w-sm text-left space-y-4">
+                {/* <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 w-full max-w-sm text-left space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold">1</div>
                         <p className="text-sm text-white/80">Point camera at clothing</p>
@@ -39,7 +39,7 @@ const HomeScreen = ({ onStart }) => {
                         <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold">3</div>
                         <p className="text-sm text-white/80">Capture & Share your look</p>
                     </div>
-                </div>
+                </div> */}
 
                 <button
                     onClick={onStart}
