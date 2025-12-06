@@ -47,20 +47,31 @@ function App() {
             ctx.textAlign = 'right';
             ctx.fillText('INSTANT CLEAN AR', tempCanvas.width - padding, tempCanvas.height - padding);
 
-            // Dot Logo
-            ctx.shadowColor = 'transparent'; // Reset shadow for shape
-            ctx.beginPath();
-            const textWidth = ctx.measureText('INSTANT CLEAN AR').width;
-            const dotX = tempCanvas.width - padding - textWidth - (fontSize * 0.6);
-            const dotY = tempCanvas.height - padding - (fontSize * 0.3);
-            ctx.arc(dotX, dotY, fontSize * 0.3, 0, Math.PI * 2);
-            ctx.fillStyle = '#22d3ee'; // Cyan
-            ctx.fill();
+            // Dot Logo -> Replaced by Image Logo
+            const logoImg = new Image();
+            logoImg.src = '/logo.png';
+            logoImg.onload = () => {
+                const logoSize = fontSize * 2.5;
+                const textWidth = ctx.measureText('INSTANT CLEAN AR').width;
+                const logoX = tempCanvas.width - padding - textWidth - logoSize - 10;
+                const logoY = tempCanvas.height - padding - logoSize + (fontSize * 0.5);
 
-            const dataUrl = tempCanvas.toDataURL('image/png');
-            setCapturedImage(dataUrl);
-            setScreen('preview');
-            logAnalyticsEvent('photo_captured');
+                // Draw Logo
+                ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+
+                const dataUrl = tempCanvas.toDataURL('image/png');
+                setCapturedImage(dataUrl);
+                setScreen('preview');
+                logAnalyticsEvent('photo_captured');
+            };
+
+            // Fallback if logo fails (network/path issue)
+            logoImg.onerror = () => {
+                const dataUrl = tempCanvas.toDataURL('image/png');
+                setCapturedImage(dataUrl);
+                setScreen('preview');
+                logAnalyticsEvent('photo_captured');
+            }
         }
     }, []);
 
