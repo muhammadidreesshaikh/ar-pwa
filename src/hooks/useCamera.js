@@ -7,32 +7,42 @@ export const useCamera = () => {
 
     useEffect(() => {
         const startCamera = async () => {
+            setError(null);
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment', // Use back camera by default for AR context mostly, but for selfie filters 'user' is better. 
-                        // The user said "Instant Clean Filter on clothing", usually implies selfie or back camera? 
-                        // Snapchat filters are usually selfie, but "clothing" might imply looking at someone else?
-                        // "Selfie" implies 'user'. "Clothing" implies 'environment' or 'user'.
-                        // Let's default to 'user' (selfie) as "filters" usually imply selfie, but provide a switch.
-                        // Actually, looking at the request "Instant Clean Filter on clothing similar to Snapchat/Instagram filters", 
-                        // it's usually applied to the user themselves (selfie).
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                });
+                // 1. Try Back Camera (Environment)
+                let stream;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: { ideal: 'environment' },
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    });
+                } catch (firstErr) {
+                    console.warn("Back camera failed, trying front camera...", firstErr);
+                    // 2. Fallback to Front Camera (User) or Any
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: true, // simplified constraint
+                        audio: false
+                    });
+                }
 
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    videoRef.current.onloadedmetadata = () => {
-                        videoRef.current.play();
-                        setCameraReady(true);
-                    };
+                    // Important for iOS/Mobile: explicit play call
+                    videoRef.current.setAttribute('autoplay', '');
+                    videoRef.current.setAttribute('muted', '');
+                    videoRef.current.setAttribute('playsinline', '');
+                    
+                    await videoRef.current.play().catch(e => console.error("Play error:", e));
+                    setCameraReady(true);
                 }
             } catch (err) {
-                console.error("Camera access denied:", err);
+                console.error("All camera attempts failed:", err);
                 setError(err);
+                setCameraReady(false);
             }
         };
 

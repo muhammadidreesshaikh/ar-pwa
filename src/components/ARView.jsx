@@ -4,7 +4,7 @@ import { useSegmentation } from '../hooks/useSegmentation';
 import { toBinaryMask } from '@tensorflow-models/body-segmentation';
 
 const ARView = ({ isFilterActive }) => {
-    const { videoRef, cameraReady } = useCamera();
+    const { videoRef, cameraReady, error: cameraError } = useCamera();
     const { segmenter, isLoading } = useSegmentation();
     const canvasRef = useRef(null);
     const requestRef = useRef(null);
@@ -12,7 +12,7 @@ const ARView = ({ isFilterActive }) => {
 
     useEffect(() => {
         const animate = async () => {
-            if (cameraReady && segmenter && canvasRef.current && videoRef.current) {
+            if (cameraReady && canvasRef.current && videoRef.current) {
                 const video = videoRef.current;
                 const canvas = canvasRef.current;
                 const ctx = canvas.getContext('2d');
@@ -173,6 +173,17 @@ const ARView = ({ isFilterActive }) => {
                     <div className="text-center">
                         <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
                         <p>Loading AI Model...</p>
+                    </div>
+                </div>
+            )}
+            {/* Error Message */}
+            {cameraError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/90 z-50 p-6">
+                    <div className="text-center text-white max-w-sm">
+                        <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <h3 className="text-xl font-bold mb-2">Camera Error</h3>
+                        <p className="text-gray-300 mb-4">{cameraError.name}: {cameraError.message}</p>
+                        <p className="text-sm text-gray-500">Please ensure you have granted camera permissions.</p>
                     </div>
                 </div>
             )}
